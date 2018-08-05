@@ -1,0 +1,11 @@
+@font-face {
+    font-family: "StarWars";
+    src: 
+        local('StarWars'),
+        url("../fonts/Starjedi.ttf")
+        format('truetype');
+}
+
+#title {
+    font-family: "StarWars", Arial, Helvetica;
+}
