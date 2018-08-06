@@ -42,6 +42,8 @@ var game = {
         this.NPC.healthPoints -= this.player.attackPower;
         if(this.NPC.healthPoints <= 0){
             this.NPC = '';
+        }else if(this.player.healthPoints <= 0){
+            this.player = '';
         }else{
             this.player.healthPoints -= this.NPC.counterAttackPower;
         }
@@ -51,6 +53,7 @@ var game = {
 
 $(document).ready(function(){
     var current = Object.create(game);
+    var first = true;
     $('#instructions').text('Select your chracter.');
     $('#attackButton').click(function(){
         $('#playerImg').attr('src', current.player.attackImg);
@@ -65,61 +68,68 @@ $(document).ready(function(){
     drawCharacters();
 
     function drawCharacters(){
-        $('#characterSelect').empty();
-        current.characters.forEach(function(character, index) {
-            var characterBox = $('<div>');
-            characterBox.addClass('col-2 characterPortrait text-center');
-            characterBox.attr('data-character', index);
-            characterBox.html('<div>' + character.name + '</div><img class="img-fluid" src="'+
-                character.portraitImg +'" /><div>'+ character.healthPoints +'</div>');
-            characterBox.click(function(event){
-                if(!current.player){
-                    current.player = current.characters[parseInt($(this).data("character"))];
-                    current.characters.splice(parseInt($(this).data("character")), 1);
-                    drawPlayer();
-                }else if(!current.NPC){
-                    $('#npc').empty();
-                    current.NPC = current.characters[parseInt($(this).data("character"))];
-                    current.characters.splice(parseInt($(this).data("character")), 1);
-                    drawNPC();
-                }
-                drawCharacters();
-            });
-            $('#characterSelect').append(characterBox);
-        });
         if(current.player && current.NPC){
             $('#characterSelect').hide();
             $('#attackButton').show();
         }else if(current.characters.length === 0){
             $('#instructions').text('Congratulations, you won.');
             $('#npc').empty();
-        }else{
+        }else if(!current.player && !first){
+            $('#instructions').text('You Lose. Refresh to start over.');
+        }else if(!current.NPC){
+            first = false;
             $('#npc').empty();
             $('#instructions').text('Select your openent.');
             $('#characterSelect').show();
             $('#attackButton').hide();
+
+            $('#characterSelect').empty();
+            current.characters.forEach(function(character, index) {
+                var characterBox = $('<div>');
+                characterBox.addClass('col-2 characterPortrait text-center');
+                characterBox.attr('data-character', index);
+                characterBox.html('<div>' + character.name + '</div><img class="img-fluid" src="'+
+                    character.portraitImg +'" /><div>'+ character.healthPoints +'</div>');
+                characterBox.click(function(event){
+                    if(!current.player){
+                        current.player = current.characters[parseInt($(this).data("character"))];
+                        current.characters.splice(parseInt($(this).data("character")), 1);
+                        drawPlayer();
+                        }else if(!current.NPC){
+                        $('#npc').empty();
+                        current.NPC = current.characters[parseInt($(this).data("character"))];
+                        current.characters.splice(parseInt($(this).data("character")), 1);
+                        drawNPC();
+                    }
+                    drawCharacters();
+                });
+                $('#characterSelect').append(characterBox);
+            });
+        }else{
+            $('#instructions').text('Attack your openent.');
         }
     };
 
     function drawPlayer(){
         $('#playerCharacter').empty();
-        var characterBox = $('<div>');
-        characterBox.addClass('characterPortrait text-center');
-        characterBox.html('<div>' + current.player.name + '</div><img id="playerImg" class="img-fluid" src="'+
+        if(current.player){
+            var characterBox = $('<div>');
+            characterBox.addClass('characterPortrait text-center');
+            characterBox.html('<div>' + current.player.name + '</div><img id="playerImg" class="img-fluid" src="'+
             current.player.portraitImg +'" /><div>'+ current.player.healthPoints +'</div>');
-        $('#playerCharacter').append(characterBox);
-        $('#instructions').text('Select your openent.');
+            $('#playerCharacter').append(characterBox);
+        }
+        
     };
 
     function drawNPC(){
         $('#npc').empty();
         if(current.NPC){
-        var characterBox = $('<div>');
-        characterBox.addClass('characterPortrait text-center');
-        characterBox.html('<div>' + current.NPC.name + '</div><img id="npcImg" class="img-fluid" src="'+
-            current.NPC.portraitImg +'" /><div>'+ current.NPC.healthPoints +'</div>');
-        $('#npc').append(characterBox);
-        $('#instructions').text('Attack your openent.');
+            var characterBox = $('<div>');
+            characterBox.addClass('characterPortrait text-center');
+            characterBox.html('<div>' + current.NPC.name + '</div><img id="npcImg" class="img-fluid" src="'+
+                current.NPC.portraitImg +'" /><div>'+ current.NPC.healthPoints +'</div>');
+            $('#npc').append(characterBox);
         }
     };
 
