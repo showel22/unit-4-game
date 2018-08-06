@@ -8,6 +8,7 @@
     crossorigin="anonymous"></script>
     <script src="assets/javascript/game.js" ></script>
     <link  rel="stylesheet" type="text/css" href="assets/css/reset.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <link  rel="stylesheet" type="text/css" href="assets/css/style.css" />
 </head>
 <body>
@@ -15,11 +16,26 @@
     <div class="container-fluid">
 
         <div id="title" class="row">
-            <div class="col-xs-12">Star Wars RPG</div>
+            <div class="col-12 text-center">Star Wars RPG</div>
+        </div>
+
+        <div class="row">
+            <div id="instructions" class="col-12"></div>
         </div>
 
         <div id="characterSelect" class="row">
 
+        </div>
+
+        <div class="row">
+            <div id="playerCharacter" class="col-6"></div>
+            <div id="npc" class="col-6"></div>
+        </div>
+
+        <div id="attackButton" class="row">
+            <div class="col-12">
+                <button class="btn btn-primary btn-block">Attack</button>
+            </div>
         </div>
 
     </div>

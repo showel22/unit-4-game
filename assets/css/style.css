@@ -6,6 +6,29 @@
         format('truetype');
 }
 
+body {
+    background-image: url('../images/background.jpg'); 
+}
+
 #title {
     font-family: "StarWars", Arial, Helvetica;
+    font-size: 48px;
+    color: goldenrod;
+}
+
+#instructions {
+    font-size: 36px;
+    color: #fff;
+    height: 100px;
+    padding: 25px;
+}
+
+.characterPortrait {
+    height: 225px;
+    color: #fff;
+}
+
+.characterPortrait img {
+    height: 80%;
+    width: auto;
 }
