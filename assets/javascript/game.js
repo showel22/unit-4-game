@@ -17,23 +17,7 @@ function createCharacter(name, healthPoints, baseAttack, counterAttackPower,
 };
 
 var game = {
-    characters: [
-        createCharacter('Ahsoka', 1000, 50, 50, 'assets/images/ahsoka/portrait.png',
-            'assets/images/ahsoka/background.jpg', 'assets/images/ahsoka/attack.gif',
-            'assets/images/ahsoka/lose.gif', 'assets/images/ahsoka/win.gif'),
-        createCharacter('Boba Fett', 500, 30, 15, 'assets/images/boba/portrait.png',
-            'assets/images/boba/background.jpg', 'assets/images/boba/attack.gif',
-            'assets/images/boba/lose.gif', 'assets/images/boba/win.gif'),
-        createCharacter('Rey', 600, 40, 30, 'assets/images/rey/portrait.png',
-            'assets/images/rey/background.jpg', 'assets/images/rey/attack.gif',
-            'assets/images/rey/lose.gif', 'assets/images/rey/win.gif'),
-        createCharacter('Vader', 900, 50, 40, 'assets/images/vader/portrait.png',
-            'assets/images/vader/background.jpg', 'assets/images/vader/attack.gif',
-            'assets/images/vader/lose.gif', 'assets/images/vader/win.gif'),
-        createCharacter('Yoda', 1500, 60, 40, 'assets/images/yoda/portrait.png',
-            'assets/images/yoda/background.jpg', 'assets/images/yoda/attack.gif',
-            'assets/images/yoda/lose.gif', 'assets/images/yoda/win.gif')
-    ],
+    characters: [],
     player: '',
     NPC: '',
 
@@ -47,6 +31,26 @@ var game = {
         }else{
             this.player.healthPoints -= this.NPC.counterAttackPower;
         }
+    },
+
+    reset: function(){
+        this.player = '';
+        this.NPC = '';
+        this.characters = [createCharacter('Ahsoka', 1000, 50, 50, 'assets/images/ahsoka/portrait.png',
+            'assets/images/ahsoka/background.jpg', 'assets/images/ahsoka/attack.gif',
+            'assets/images/ahsoka/lose.gif', 'assets/images/ahsoka/win.gif'),
+        createCharacter('Boba Fett', 500, 30, 15, 'assets/images/boba/portrait.png',
+            'assets/images/boba/background.jpg', 'assets/images/boba/attack.gif',
+            'assets/images/boba/lose.gif', 'assets/images/boba/win.gif'),
+        createCharacter('Rey', 600, 40, 30, 'assets/images/rey/portrait.png',
+            'assets/images/rey/background.jpg', 'assets/images/rey/attack.gif',
+            'assets/images/rey/lose.gif', 'assets/images/rey/win.gif'),
+        createCharacter('Vader', 900, 50, 40, 'assets/images/vader/portrait.png',
+            'assets/images/vader/background.jpg', 'assets/images/vader/attack.gif',
+            'assets/images/vader/lose.gif', 'assets/images/vader/win.gif'),
+        createCharacter('Yoda', 1500, 60, 40, 'assets/images/yoda/portrait.png',
+            'assets/images/yoda/background.jpg', 'assets/images/yoda/attack.gif',
+            'assets/images/yoda/lose.gif', 'assets/images/yoda/win.gif')];
     }
 
 };
@@ -54,18 +58,27 @@ var game = {
 $(document).ready(function(){
     var current = Object.create(game);
     var first = true;
-    $('#instructions').text('Select your chracter.');
-    $('#attackButton').click(function(){
-        $('#playerImg').attr('src', current.player.attackImg);
-        $('#npcImg').attr('src', current.NPC.attackImg);
-        setTimeout(function(){
-            drawPlayer();
-            drawNPC();
-        }, 1000);
-        current.attack();
+    startGame();
+
+    function startGame(){
+        first = true;
+        current.reset();
+        $('#attackButton').click(function(){
+            if(current.NPC){
+                $('#playerImg').attr('src', current.player.attackImg);
+                $('#npcImg').attr('src', current.NPC.attackImg);
+                $('#attackButton button').prop('disabled', true);
+                setTimeout(function(){
+                    drawPlayer();
+                    drawNPC();
+                    $('#attackButton button').prop('disabled', false);
+                }, 1000);
+                current.attack();
+                drawCharacters();
+            }
+        });
         drawCharacters();
-    });
-    drawCharacters();
+    };
 
     function drawCharacters(){
         if(current.player && current.NPC){
@@ -73,39 +86,19 @@ $(document).ready(function(){
             $('#attackButton').show();
         }else if(current.characters.length === 0){
             $('#instructions').text('Congratulations, you won.');
+            startGame();
             $('#npc').empty();
         }else if(!current.player && !first){
             $('#instructions').text('You Lose. Refresh to start over.');
+            startGame();
+        }else if(!current.NPC && !current.player){
+            $('#instructions').text('Select your chracter.');
+            buildCharacterList();
         }else if(!current.NPC){
             first = false;
             $('#npc').empty();
             $('#instructions').text('Select your opponent.');
-            $('#characterSelect').show();
-            $('#attackButton').hide();
-
-            $('#characterSelect').empty();
-            current.characters.forEach(function(character, index) {
-                var characterBox = $('<div>');
-                characterBox.addClass('col-2 characterPortrait text-center');
-                characterBox.attr('data-character', index);
-                characterBox.html('<div>' + character.name + '</div><img class="img-fluid" src="'+
-                    character.portraitImg +'" /><div>'+ character.healthPoints +'</div>');
-                characterBox.click(function(event){
-                    if(!current.player){
-                        current.player = current.characters[parseInt($(this).data("character"))];
-                        current.characters.splice(parseInt($(this).data("character")), 1);
-                        drawPlayer();
-                        }else if(!current.NPC){
-                        $('#npc').empty();
-                        current.NPC = current.characters[parseInt($(this).data("character"))];
-                        current.characters.splice(parseInt($(this).data("character")), 1);
-                        $('body').css('background-image', 'url(' + current.NPC.backgroundImg + ')');
-                        drawNPC();
-                    }
-                    drawCharacters();
-                });
-                $('#characterSelect').append(characterBox);
-            });
+            buildCharacterList();
         }else{
             $('#instructions').text('Attack your openent.');
         }
@@ -132,6 +125,35 @@ $(document).ready(function(){
                 current.NPC.portraitImg +'" /><div>'+ current.NPC.healthPoints +'</div>');
             $('#npc').append(characterBox);
         }
+    };
+
+    function buildCharacterList(){
+        $('#characterSelect').show();
+        $('#attackButton').hide();
+
+        $('#characterSelect').empty();
+        current.characters.forEach(function(character, index) {
+            var characterBox = $('<div>');
+            characterBox.addClass('col-2 characterPortrait text-center');
+            characterBox.attr('data-character', index);
+            characterBox.html('<div>' + character.name + '</div><img class="img-fluid" src="'+
+                character.portraitImg +'" /><div>'+ character.healthPoints +'</div>');
+            characterBox.click(function(event){
+                if(!current.player){
+                    current.player = current.characters[parseInt($(this).data("character"))];
+                    current.characters.splice(parseInt($(this).data("character")), 1);
+                    drawPlayer();
+                    }else if(!current.NPC){
+                    $('#npc').empty();
+                    current.NPC = current.characters[parseInt($(this).data("character"))];
+                    current.characters.splice(parseInt($(this).data("character")), 1);
+                    $('body').css('background-image', 'url(' + current.NPC.backgroundImg + ')');
+                    drawNPC();
+                }
+                drawCharacters();
+            });
+            $('#characterSelect').append(characterBox);
+        });
     };
 
 
