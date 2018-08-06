@@ -21,16 +21,16 @@ var game = {
         createCharacter('Ahsoka', 1000, 50, 50, 'assets/images/ahsoka/portrait.png',
             'assets/images/ahsoka/background.jpg', 'assets/images/ahsoka/attack.gif',
             'assets/images/ahsoka/lose.gif', 'assets/images/ahsoka/win.gif'),
-        createCharacter('Boba Fett', 200, 10, 15, 'assets/images/boba/portrait.png',
+        createCharacter('Boba Fett', 500, 30, 15, 'assets/images/boba/portrait.png',
             'assets/images/boba/background.jpg', 'assets/images/boba/attack.gif',
             'assets/images/boba/lose.gif', 'assets/images/boba/win.gif'),
-        createCharacter('Rey', 500, 20, 30, 'assets/images/rey/portrait.png',
+        createCharacter('Rey', 600, 40, 30, 'assets/images/rey/portrait.png',
             'assets/images/rey/background.jpg', 'assets/images/rey/attack.gif',
             'assets/images/rey/lose.gif', 'assets/images/rey/win.gif'),
-        createCharacter('Vader', 900, 25, 40, 'assets/images/vader/portrait.png',
+        createCharacter('Vader', 900, 50, 40, 'assets/images/vader/portrait.png',
             'assets/images/vader/background.jpg', 'assets/images/vader/attack.gif',
             'assets/images/vader/lose.gif', 'assets/images/vader/win.gif'),
-        createCharacter('Yoda', 1500, 40, 40, 'assets/images/yoda/portrait.png',
+        createCharacter('Yoda', 1500, 60, 40, 'assets/images/yoda/portrait.png',
             'assets/images/yoda/background.jpg', 'assets/images/yoda/attack.gif',
             'assets/images/yoda/lose.gif', 'assets/images/yoda/win.gif')
     ],
@@ -79,7 +79,7 @@ $(document).ready(function(){
         }else if(!current.NPC){
             first = false;
             $('#npc').empty();
-            $('#instructions').text('Select your openent.');
+            $('#instructions').text('Select your opponent.');
             $('#characterSelect').show();
             $('#attackButton').hide();
 
@@ -99,6 +99,7 @@ $(document).ready(function(){
                         $('#npc').empty();
                         current.NPC = current.characters[parseInt($(this).data("character"))];
                         current.characters.splice(parseInt($(this).data("character")), 1);
+                        $('body').css('background-image', 'url(' + current.NPC.backgroundImg + ')');
                         drawNPC();
                     }
                     drawCharacters();
